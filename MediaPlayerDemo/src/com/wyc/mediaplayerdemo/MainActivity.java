@@ -5,7 +5,9 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnInfoListener;
 import io.vov.vitamio.Vitamio;
+import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
+import io.vov.vitamio.widget.VideoView.OnPlayerListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -22,7 +24,20 @@ public class MainActivity extends Activity implements OnInfoListener, OnBufferin
 	 * TODO: Set the path variable to a streaming video URL or a local media
 	 * file path.
 	 */
-	private String path = "rtmp://218.28.177.199:1935/live/300k";
+	// TVB1
+	// private String path =
+	// "http://ktv002.cdnak.ds.kylintv.net/nlds/kylin/tvbj1/as/live/tvbj1_4.m3u8";
+	// TVBE
+	// private String path =
+	// "http://ktv032.cdnak.ds.kylintv.net/nlds/kylin/tvbent/as/live/tvbent_4.m3u8";
+	// TVB2
+	// private String path =
+	// "http://ktv028.cdnak.ds.kylintv.net/nlds/kylin/tvbj2/as/live/tvbj2_4.m3u8";
+	// 郑州
+	// private String path = "rtmp://218.28.177.199:1935/live/300k";
+	// 香港
+	private String path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+
 	private Uri uri;
 	private VideoView mVideoView;
 	private ProgressBar pb;
@@ -41,6 +56,8 @@ public class MainActivity extends Activity implements OnInfoListener, OnBufferin
 		player_btn = findViewById(R.id.player_btn);
 		downloadRateView = (TextView) findViewById(R.id.download_rate);
 		loadRateView = (TextView) findViewById(R.id.load_rate);
+		path = getIntent().getStringExtra("url").toString();
+
 		if (path == "") {
 			// Tell the user to provide a media file URL/path.
 			Toast.makeText(MainActivity.this,
@@ -54,7 +71,7 @@ public class MainActivity extends Activity implements OnInfoListener, OnBufferin
 			 */
 			uri = Uri.parse(path);
 			mVideoView.setVideoURI(uri);
-			// mVideoView.setMediaController(new MediaController(this));
+			mVideoView.setMediaController(new MediaController(this));
 
 			mVideoView.requestFocus();
 			mVideoView.setMediaBufferingIndicator(player_btn);
@@ -78,6 +95,21 @@ public class MainActivity extends Activity implements OnInfoListener, OnBufferin
 
 				mVideoView.start();
 				player_btn.setVisibility(View.GONE);
+			}
+		});
+		mVideoView.setOnPlayerListener(new OnPlayerListener() {
+
+			@Override
+			public void onClick() {
+				// TODO Auto-generated method stub
+				Log.e("tag", "---setOnPlayerListener---");
+				if (mVideoView.isPlaying()) {
+					player_btn.setVisibility(View.VISIBLE);
+					mVideoView.pause();
+				} else {
+					// mVideoView.start();
+				}
+
 			}
 		});
 		mVideoView.setOnClickListener(new OnClickListener() {
